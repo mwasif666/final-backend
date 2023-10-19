@@ -4,14 +4,18 @@ const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "wasifisagoodboy12#";
 const bcrypt = require("bcrypt");
-const User = require("../models/User");
+const Admin = require("../models/Admin");
 
 // Routes:01 for user sign up, status:done ,testing complete
 router.post(
-  "/signup",
+  "/adminsignup",
   [
-    body("userName", "Enter a valid name").isLength({ min: 3 }),
+    body("firstName", "Enter a valid name").isLength({ min: 3 }),
+    body("lastName", "Enter a valid name").isLength({ min: 3 }),
     body("email", "Enter a valid gmail").isEmail(),
+    body("cnic", "Enter a valid name").isLength({ min: 12 }),
+    body("phoneNumber", "Enter a valid name").isLength({ min: 10 }),
+    body("address", "Enter a valid name").isLength({ min: 7 }),
     body("password", "Enter a valid name").isLength({ min: 7 }),
   ],
   async (req, res) => {
@@ -22,22 +26,37 @@ router.post(
       }
       let salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(req.body.password, salt);
-      const user = await User.create({
-        userName: req.body.userName,
+
+      // for auto genertate the number
+      const maxNumber = await Admin.findOne(
+        {},
+        { adminID: 1 },
+        { sort: { adminID: -1 } }
+      );
+      const nextNo = maxNumber ? maxNumber.adminID + 1 : 1;
+
+      const admin = await Admin.create({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
+        cnic: req.body.cnic,
+        DOB: req.body.DOB,
+        adminID: nextNo,
+        phoneNumber: req.body.phoneNumber,
+        address: req.body.address,
         password: secPass,
       });
 
       const data = {
-        user: {
-          id: user.id,
+        admin: {
+          id: admin.id,
         },
       };
 
       const authToken = jwt.sign(data, JWT_SECRET);
       res.json({
         authToken,
-        message: "User Created Successfully",
+        message: "Admin Created Successfully",
         success: true,
       });
     } catch (error) {
