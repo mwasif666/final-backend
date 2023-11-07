@@ -35,7 +35,7 @@ router.post(
           id: user.id,
         },
       };
-
+hi wasif
       const authToken = jwt.sign(data, JWT_SECRET);
       res.json({
         authToken,
