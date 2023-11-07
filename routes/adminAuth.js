@@ -5,10 +5,12 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = "wasifisagoodboy12#";
 const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
+const fetchAdmin = require("../middelware/fetchAdmin");
 
 // Routes:01 for user sign up, status:done ,testing complete
 router.post(
   "/adminsignup",
+  fetchAdmin,
   [
     body("firstName", "Enter a valid name").isLength({ min: 3 }),
     body("lastName", "Enter a valid name").isLength({ min: 3 }),
@@ -68,9 +70,9 @@ router.post(
 
 // Route:02 for user login
 router.post(
-  "/login",
+  "/adminlogin",
   [
-    body("email", "Enter a valid name").isEmail(),
+    body("adminID", "Enter a valid id").exists(),
     body("password", "Enter a valid password").isLength({ min: 7 }),
   ],
   async (req, res) => {
@@ -80,20 +82,20 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password } = req.body;
+    const { adminID, password } = req.body;
 
     try {
       // Check if the user exists in the database
-      let user = await User.findOne({ email });
-
-      if (user) {
+      let admin = await Admin.findOne({ adminID });
+      console.log(admin);
+      if (admin) {
         // Compare the entered password with the hashed password in the database
-        let passwordMatch = await bcrypt.compare(password, user.password);
-
+        let passwordMatch = await bcrypt.compare(password, admin.password);
+        console.log(passwordMatch);
         if (passwordMatch) {
           // Password is valid, create a JWT token
           const data = {
-            user: user.id,
+            admin: admin.id,
           };
           const authToken = jwt.sign(data, JWT_SECRET);
           res.json({ authToken, success: true });

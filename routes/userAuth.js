@@ -12,7 +12,9 @@ router.post(
   [
     body("userName", "Enter a valid name").isLength({ min: 3 }),
     body("email", "Enter a valid gmail").isEmail(),
-    body("password", "Enter a valid name").isLength({ min: 7 }),
+    body("password", "Password should be atleast 8 characters").isLength({
+      min: 7,
+    }),
   ],
   async (req, res) => {
     try {
@@ -40,7 +42,7 @@ router.post(
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "error" });
+      res.status(500).json({ message: "Some went wrong" });
     }
   }
 );
@@ -96,5 +98,4 @@ router.post(
     }
   }
 );
-
 module.exports = router;
