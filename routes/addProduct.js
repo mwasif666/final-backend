@@ -10,7 +10,7 @@ const upload = multer({ dest: "uploads/" });
 router.post(
   "/addproduct",
   fetchAdmin,
-  upload.single("image"),
+  upload.array("image", 2),
   [
     body("prodTitle", "Enter a valid product title").isLength({ min: 3 }),
     body("prodDesc", "Enter a valid product description").isLength({ min: 23 }),
@@ -33,13 +33,18 @@ router.post(
         { sort: { prodNo: -1 } }
       );
       const nextProdNo = maxNo ? maxNo.prodNo + 1 : 1;
+
+      // Handle multiple image uploads
+      const images = req.files;
+      const prodImgPaths = images.map((image) => image.path);
+
       const product = await Product({
         prodNo: nextProdNo,
         prodTitle: req.body.prodTitle,
         prodDesc: req.body.prodDesc,
         prodPrice: req.body.prodPrice,
-        prodImg1: req.file.path,
-        prodImg2: req.file.path,
+        prodImg1: prodImgPaths[0],
+        prodImg2: prodImgPaths[1],
         prodQty: req.body.prodQty,
         prodSize: req.body.prodSize,
         prodColor: req.body.prodColor,
@@ -119,9 +124,24 @@ router.delete("/deleteproduct/:Id", fetchAdmin, async (req, res) => {
 });
 
 // 04 This api is for view product
-router.get("/getproduct", fetchAdmin, async (req, res) => {
+router.get("/getproduct", async (req, res) => {
   try {
     let find = await Product.find();
+    if (find) {
+      res.status(200).json({ product: find, success: true });
+    } else {
+      res.status(401).json({ success: false });
+    }
+  } catch (error) {
+    res.status(401).json({ message: "Some thing went wrong!", error: err });
+  }
+});
+
+// 05 This api is for view single product 
+router.get("/getproduct/:prodNo", async (req, res) => {
+  const prodNo = req.params.body
+  try {
+    let find = await Product.findOne({prodNo});
     if (find) {
       res.status(200).json({ product: find, success: true });
     } else {
