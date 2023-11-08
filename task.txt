@@ -1,0 +1,9 @@
+user login status done
+admin login status done
+add prodcut statu done
+
+is ma user login ker raha ha sgn up ker raha ha aur is tarahan sa he admin 
+aur admin product add ker raha ha with crud
+user prodcut view keraga api done but detail ka liya hama alag sa api banani hogi so done now 
+// =========================
+and now the second task is user can place order and storeower receive the order so  we have get and post method 
