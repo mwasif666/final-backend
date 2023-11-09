@@ -73,7 +73,7 @@ router.get(
         const order = await Order.find();
         res.json({
           order,
-          message: "Get Order Successfully",
+          message: "Get Order Successfully!",
           success: true,
         });
       } catch (error) {
