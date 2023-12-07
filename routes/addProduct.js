@@ -6,11 +6,26 @@ const { body, validationResult } = require("express-validator");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
+// Multer configuration
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/"); // Set your desired upload directory
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + "-" + file.originalname);
+//   },
+// });
+
+// const upload = multer({ storage: storage });
+
 // 01 This is our first route for add product
 router.post(
   "/addproduct",
   fetchAdmin,
-  upload.array("image", 2),
+  upload.fields([
+    { name: "prodImg1", maxCount: 1 },
+    { name: "prodImg2", maxCount: 1 },
+  ]),
   [
     body("prodTitle", "Enter a valid product title").isLength({ min: 3 }),
     body("prodDesc", "Enter a valid product description").isLength({ min: 23 }),
@@ -34,27 +49,30 @@ router.post(
       );
       const nextProdNo = maxNo ? maxNo.prodNo + 1 : 1;
 
-      // Handle multiple image uploads
-      const images = req.files;
-      const prodImgPaths = images.map((image) => image.path);
+      const prodImg1Path = req.files["prodImg1"][0].path;
+      const prodImg2Path = req.files["prodImg2"][0].path;
 
       const product = await Product({
         prodNo: nextProdNo,
         prodTitle: req.body.prodTitle,
         prodDesc: req.body.prodDesc,
         prodPrice: req.body.prodPrice,
-        prodImg1: prodImgPaths[0],
-        prodImg2: prodImgPaths[1],
+        prodImg1: prodImg1Path,
+        prodImg2: prodImg2Path,
         prodQty: req.body.prodQty,
         prodSize: req.body.prodSize,
         prodColor: req.body.prodColor,
         prodCategory: req.body.prodCategory,
+        productFeatured: req.body.productFeatured,
       });
       const prod = await product.save();
-      res
-        .status(200)
-        .json({ message: "Product Added Successfully", product: prod });
+      res.status(200).json({
+        message: "Product Added Successfully",
+        product: prod,
+        success: true,
+      });
     } catch (err) {
+      console.log(err);
       res.status(401).json({ message: "Some thing went wrong!", error: err });
     }
   }
@@ -125,23 +143,58 @@ router.delete("/deleteproduct/:Id", fetchAdmin, async (req, res) => {
 
 // 04 This api is for view product
 router.get("/getproduct", async (req, res) => {
-  try {
-    let find = await Product.find();
-    if (find) {
-      res.status(200).json({ product: find, success: true });
-    } else {
-      res.status(401).json({ success: false });
+  if (req.query.productFeatured) {
+    try {
+      let findByFeatures = await Product.findOne({
+        productFeatured: req.query.productFeatured,
+      });
+      if (findByFeatures) {
+        res.status(201).json({
+          message: "Product fetched Successfully!",
+          findByFeatures,
+          success: true,
+        });
+      } else {
+        res.status(401).json({
+          message: "Featured Not Found",
+          success: false,
+        });
+      }
+    } catch (error) {
+      res.status(501).json({
+        message: "Some thing went wrong in fetching products",
+        error: err,
+      });
     }
-  } catch (error) {
-    res.status(401).json({ message: "Some thing went wrong!", error: err });
+  } else {
+    try {
+      let find = await Product.find({});
+      console.log(find);
+      if (find) {
+        res.status(200).json({
+          message: "Product find Successfully",
+          product: find,
+          success: true,
+        });
+      } else {
+        res
+          .status(401)
+          .json({ meesage: "Products not found!", success: false });
+      }
+    } catch (error) {
+      res.status(501).json({
+        message: "Some thing went wrong in fetching products",
+        error: err,
+      });
+    }
   }
 });
 
-// 05 This api is for view single product 
+// 05 This api is for view single product
 router.get("/getproduct/:prodNo", async (req, res) => {
-  const prodNo = req.params.body
+  const prodNo = req.params.body;
   try {
-    let find = await Product.findOne({prodNo});
+    let find = await Product.findOne({ prodNo });
     if (find) {
       res.status(200).json({ product: find, success: true });
     } else {
