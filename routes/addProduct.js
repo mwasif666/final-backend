@@ -63,11 +63,14 @@ router.post(
         prodSize: req.body.prodSize,
         prodColor: req.body.prodColor,
         prodCategory: req.body.prodCategory,
+        productFeatured: req.body.productFeatured,
       });
       const prod = await product.save();
-      res
-        .status(200)
-        .json({ message: "Product Added Successfully", product: prod });
+      res.status(200).json({
+        message: "Product Added Successfully",
+        product: prod,
+        success: true,
+      });
     } catch (err) {
       console.log(err);
       res.status(401).json({ message: "Some thing went wrong!", error: err });
@@ -140,15 +143,50 @@ router.delete("/deleteproduct/:Id", fetchAdmin, async (req, res) => {
 
 // 04 This api is for view product
 router.get("/getproduct", async (req, res) => {
-  try {
-    let find = await Product.find();
-    if (find) {
-      res.status(200).json({ product: find, success: true });
-    } else {
-      res.status(401).json({ success: false });
+  if (req.query.productFeatured) {
+    try {
+      let findByFeatures = await Product.findOne({
+        productFeatured: req.query.productFeatured,
+      });
+      if (findByFeatures) {
+        res.status(201).json({
+          message: "Product fetched Successfully!",
+          findByFeatures,
+          success: true,
+        });
+      } else {
+        res.status(401).json({
+          message: "Featured Not Found",
+          success: false,
+        });
+      }
+    } catch (error) {
+      res.status(501).json({
+        message: "Some thing went wrong in fetching products",
+        error: err,
+      });
     }
-  } catch (error) {
-    res.status(401).json({ message: "Some thing went wrong!", error: err });
+  } else {
+    try {
+      let find = await Product.find({});
+      console.log(find);
+      if (find) {
+        res.status(200).json({
+          message: "Product find Successfully",
+          product: find,
+          success: true,
+        });
+      } else {
+        res
+          .status(401)
+          .json({ meesage: "Products not found!", success: false });
+      }
+    } catch (error) {
+      res.status(501).json({
+        message: "Some thing went wrong in fetching products",
+        error: err,
+      });
+    }
   }
 });
 

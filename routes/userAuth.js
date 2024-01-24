@@ -29,13 +29,11 @@ router.post(
         email: req.body.email,
         password: secPass,
       });
-
       const data = {
         user: {
           id: user.id,
         },
       };
-
       const authToken = jwt.sign(data, JWT_SECRET);
       res.json({
         authToken,
