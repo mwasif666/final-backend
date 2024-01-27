@@ -6,19 +6,7 @@ const { body, validationResult } = require("express-validator");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
-// Multer configuration
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads/"); // Set your desired upload directory
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + "-" + file.originalname);
-//   },
-// });
 
-// const upload = multer({ storage: storage });
-
-// 01 This is our first route for add product
 router.post(
   "/addproduct",
   fetchAdmin,
@@ -66,6 +54,12 @@ router.post(
         productFeatured: req.body.productFeatured,
       });
       const prod = await product.save();
+
+      if (!prod) {
+        return res
+          .status(404)
+          .json({ msg: "Product cannot be saved try again!" });
+      }
       res.status(200).json({
         message: "Product Added Successfully",
         product: prod,

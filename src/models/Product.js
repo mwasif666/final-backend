@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const productSchema = new Schema(
-  {
+const productSchema = new Schema({
     prodNo: {
-      type: String,
+      type: Number,
       required: true,
       default: 1,
     },
@@ -42,6 +41,10 @@ const productSchema = new Schema(
       required: true,
     },
     prodCategory: {
+      type: String,
+      required: true,
+    },
+    productFeatured: {
       type: String,
       required: true,
     },
