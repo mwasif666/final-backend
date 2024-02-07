@@ -5,7 +5,7 @@ const Product = require("../models/Product");
 const { body, validationResult } = require("express-validator");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-
+const uploadToCloudinary = require("../utilities/cloudinary");
 
 router.post(
   "/addproduct",
@@ -37,16 +37,20 @@ router.post(
       );
       const nextProdNo = maxNo ? maxNo.prodNo + 1 : 1;
 
-      const prodImg1Path = req.files["prodImg1"][0].path;
-      const prodImg2Path = req.files["prodImg2"][0].path;
+      const prodImg1Path = await uploadToCloudinary(
+        req.files["prodImg1"][0].path
+      );
+      const prodImg2Path = await uploadToCloudinary(
+        req.files["prodImg2"][0].path
+      );
 
       const product = await Product({
         prodNo: nextProdNo,
         prodTitle: req.body.prodTitle,
         prodDesc: req.body.prodDesc,
         prodPrice: req.body.prodPrice,
-        prodImg1: prodImg1Path,
-        prodImg2: prodImg2Path,
+        prodImg1: prodImg1Path.secure_url, // Using secure_url property from Cloudinary response
+        prodImg2: prodImg2Path.secure_url,
         prodQty: req.body.prodQty,
         prodSize: req.body.prodSize,
         prodColor: req.body.prodColor,
