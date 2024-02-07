@@ -39,12 +39,10 @@ const addProduct = async (req, res) => {
     const prod = await product.save();
 
     if (!prod) {
-      return res
-        .status(404)
-        .json({
-          message: "Product cannot be saved try again!",
-          success: false,
-        });
+      return res.status(404).json({
+        message: "Product cannot be saved try again!",
+        success: false,
+      });
     }
 
     res.status(200).json({
@@ -133,7 +131,7 @@ const deleteProd = async (req, res) => {
 const getProd = async (req, res) => {
   if (req.query.productFeatured) {
     try {
-      let findByFeatures = await Product.findOne({
+      let findByFeatures = await Product.find({
         productFeatured: req.query.productFeatured,
       });
       if (findByFeatures) {
