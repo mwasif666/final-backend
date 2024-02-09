@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const { validationResult } = require("express-validator");
+const uploadToCloudinary = require("../utilities/cloudinary");
 
 const addProduct = async (req, res) => {
   try {
@@ -21,14 +22,16 @@ const addProduct = async (req, res) => {
     const prodImg2Path = req.files["prodImg2"]
       ? req.files["prodImg2"][0].path
       : null;
-
+     const image1Url = await uploadToCloudinary(prodImg1Path)
+     const image2Url = await uploadToCloudinary(prodImg2Path)
+  
     const product = await Product({
       prodNo: nextProdNo,
       prodTitle: req.body.prodTitle,
       prodDesc: req.body.prodDesc,
       prodPrice: req.body.prodPrice,
-      prodImg1: prodImg1Path,
-      prodImg2: prodImg2Path,
+      prodImg1: image1Url.url,
+      prodImg2: image2Url.url,
       prodQty: req.body.prodQty,
       prodSize: req.body.prodSize,
       prodColor: req.body.prodColor,
@@ -37,12 +40,14 @@ const addProduct = async (req, res) => {
     });
 
     const prod = await product.save();
-
+   console.log(prod);
     if (!prod) {
-      return res.status(404).json({
-        message: "Product cannot be saved try again!",
-        success: false,
-      });
+      return res
+        .status(404)
+        .json({
+          message: "Product cannot be saved try again!",
+          success: false,
+        });
     }
 
     res.status(200).json({

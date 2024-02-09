@@ -1,68 +1,72 @@
 const mongoose = require("mongoose");
-const { Schema } = mongoose.Schema;
+const { Schema } = mongoose;
 
-const orderSchema = new Schema({
-  OrderNo:{
-    type: String, 
-    required: true
-  },
-  user:{
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "user"
-  },
-  prodNo: {
-    type: String,
-    required: true,
-    default: 1,
-  },
-  prodTitle: {
-    type: String,
-    required: true,
-  },
-  prodPrice:{
+const orderDetails = new Schema({
+  productName: String,
+  productPrice: String,
+  productColor: String,
+  productCategory: String,
+  productFeature:String,
+  ProductQty:String,
+});
+const OrderSchema = new Schema(
+  {
+    orderNo: {
+      type: Number,
+      default: 1,
+    },
+    orderInfo:[orderDetails],
+    totalPrice: { 
+        type: String, 
+        required: true 
+    },
+    totalQty: { 
+        type: String, 
+        required: true 
+    },
+    shippingAddress:{
+        type:String,
+        required:true
+    },
+    cusName:{
       type:String,
       required:true
+    },
+    cusId:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user"
+    },
+    phoneNo:{
+        type:String,
+        required:true
+    },
+    zipCode:{
+      type:String,
+      required:true
+    },
+    city:{
+      type:String,
+      required:true
+    },
+    country:{
+      type:String,
+      required:true
+    },
+    orderStatus:{
+        type:String,
+        anum:["Pending","InShipping","Completed","Cancelled"],
+        required:true,
+        default:"Pending"
+    },
+    updater:{
+      type:String
+    },
+    Date:{
+        type:Date,
+        default:Date.now()
+    }
   },
-  prodQty: {
-    type: Number,
-    required: true,
-    default: 1,
-  },
-  prodSize: {
-    type: String,
-    required: true,
-  },
-  prodColor: {
-    type: String,
-    required: true,
-  },
-  prodCategory: {
-    type: String,
-    required: true,
-  },
-  productQty:{
-    type:Number,
-    required:true
-  },
-  status:{
-    type:String , 
-    default:'PENDING',
-  },
-  deliveryStatus:{
-    type:String,
-    default:'unshipped',
-  },
-  phone:{
-    type:Number,
-    required:true
-  },
-  address:{
-    type:String,
-    requierd:true
-  }
-
-});
-
-const Order = mongoose.model("order", orderSchema);
-Order.createIndexes();
-module.exports = Order;
+  { timestamps: true }
+);
+const Order = mongoose.model("Order" , OrderSchema)
+module.exports = Order

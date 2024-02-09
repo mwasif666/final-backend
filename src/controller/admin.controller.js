@@ -92,6 +92,7 @@ const adminLogin = async (req, res) => {
           phoneNumber: admin.phoneNumber,
         };
         const { password, ...logedInUser } = admin.toObject();
+      
         const authToken = jwt.sign(data, JWT_SECRET);
         res.json({
           authToken,

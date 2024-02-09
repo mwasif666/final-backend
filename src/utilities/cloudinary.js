@@ -1,3 +1,4 @@
+const fs = require("fs");
 const cloudinary = require("cloudinary");
 cloudinary.config({
   cloud_name: "dndfzn6h3",
