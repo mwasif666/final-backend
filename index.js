@@ -6,7 +6,7 @@ const cors = require("cors");
 const userAuth = require('./src/routes/userAuth.routes.js');
 const adminAuth = require('./src/routes/adminAuth.routes.js');
 const addProduct = require('./src/routes/addProduct.routes.js');
-
+const order =  require('./src/routes/order.routes.js');
 connectToMongo();
 
 // * express.json is a middleware function in express which help parse the incoming request with json payload and it is based on body parser
@@ -17,6 +17,7 @@ app.use('/uploads', express.static('uploads'))
 app.use('/api/auth/v1', userAuth);
 app.use('/api/auth/v1', adminAuth);
 app.use('/api/prod/v1' , addProduct )
+app.use('/api/order/v1' , order )
 // app.use("/api/auth", require("./routes/userAuth"));
 // app.use("/api/auth", require("./routes/adminAuth"));
 

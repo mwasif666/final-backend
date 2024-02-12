@@ -16,7 +16,7 @@ const userSignUp = async (req, res) => {
     const secPass = await bcrypt.hash(password, salt);
 
     let checkUserExist = await User.find({ email });
-    if (checkUserExist.length!==0) {
+    if (checkUserExist.length !== 0) {
       return res
         .status(401)
         .json({ message: "Email is in used", success: false });
