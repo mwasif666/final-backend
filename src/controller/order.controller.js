@@ -1,7 +1,6 @@
 const Order = require("../models/Order");
 
 const placedOrder = async (req, res) => {
-
   const {
     orderDetails,
     totalPrice,
@@ -14,7 +13,6 @@ const placedOrder = async (req, res) => {
     country,
     orderStatus,
   } = req.body;
-
 
   // if (
   //   [
@@ -52,7 +50,7 @@ const placedOrder = async (req, res) => {
       totalQty,
       shippingAddress,
       cusName,
-      cusId: req.user._id,
+      cusId: req.user.id,
       phoneNo,
       zipCode,
       city,
@@ -89,13 +87,11 @@ const getOrder = async (req, res) => {
         .json({ message: "Order Not Found!", success: false });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Order Fetched Successfully",
-        success: true,
-        orders: fetchOrder,
-      });
+    res.status(200).json({
+      message: "Order Fetched Successfully",
+      success: true,
+      orders: fetchOrder,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
