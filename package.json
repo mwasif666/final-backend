@@ -10,7 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+<<<<<<< HEAD
     "cloudinary": "^2.0.0",
+=======
+    "cloudinary": "^2.0.1",
+>>>>>>> 8281a0548513b1588484e5b06e294f9f53be6e65
     "cors": "^2.8.5",
     "cros": "^1.0.1",
     "express": "^4.18.2",
