@@ -7,7 +7,6 @@ const placedOrder = async (req, res) => {
     totalQty,
     shippingAddress,
     cusName,
-    cusId,
     phoneNo,
     zipCode,
     city,
@@ -51,7 +50,7 @@ const placedOrder = async (req, res) => {
       totalQty,
       shippingAddress,
       cusName,
-      cusId: req.user._id,
+      cusId: req.user.id,
       phoneNo,
       zipCode,
       city,
@@ -64,7 +63,6 @@ const placedOrder = async (req, res) => {
         .status(501)
         .json({ message: "Error in Creating Order", success: false });
     }
-
     res
       .status(201)
       .json({ message: "Order Placed Successfully", success: true, order });
@@ -78,7 +76,6 @@ const placedOrder = async (req, res) => {
   }
 };
 
-
 const getOrder = async (req, res) => {
   const { orderStatus } = req.query;
   try {
@@ -90,13 +87,11 @@ const getOrder = async (req, res) => {
         .json({ message: "Order Not Found!", success: false });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Order Fetched Successfully",
-        success: true,
-        orders: fetchOrder,
-      });
+    res.status(200).json({
+      message: "Order Fetched Successfully",
+      success: true,
+      orders: fetchOrder,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
